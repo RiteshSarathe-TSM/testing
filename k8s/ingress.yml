@@ -2,15 +2,19 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: service1-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
+  ingressClassName: nginx
   rules:
   - host: matorg.com
     http:
       paths:
-      - path: /ping
+      - path: /service1(/|$)(.*)
         pathType: Prefix
         backend:
           service:
             name: service1
             port:
               number: 80
+

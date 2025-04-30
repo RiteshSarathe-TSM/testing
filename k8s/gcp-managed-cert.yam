@@ -1,0 +1,8 @@
+# gcp-managed-cert.yaml
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: matorg-managed-cert
+spec:
+  domains:
+    - matorg.com

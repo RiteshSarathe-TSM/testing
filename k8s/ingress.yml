@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: "35.198.14.88"  # Replace with your Ingress Controller's external IP
+    http:
+      paths:
+      - path: /service1  # This path will route to service1
+        pathType: Prefix
+        backend:
+          service:
+            name: service1  # Name of your service1
+            port:
+              number: 80  # Port for service1
+      # - path: /service2  # This path will route to service2
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: service2  # Name of your service2
+      #       port:
+      #         number: 80  # Port for service2

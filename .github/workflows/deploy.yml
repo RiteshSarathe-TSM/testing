@@ -1,0 +1,40 @@
+name: CI/CD to GKE
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Authenticate with GCP
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    - name: Set up gcloud CLI
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: astute-tractor-457019-j3
+
+    - name: Configure Docker
+      run: gcloud auth configure-docker southamerica-east1-docker.pkg.dev
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t southamerica-east1-docker.pkg.dev/astute-tractor-457019-j3/fast-api/service1:latest .
+        docker push southamerica-east1-docker.pkg.dev/astute-tractor-457019-j3/fast-api/service1:latest
+
+    - name: Get GKE credentials
+      run: gcloud container clusters get-credentials autopilot-cluster-2 --zone southamerica-east1
+
+    - name: Apply Kubernetes manifests
+      run: |
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml

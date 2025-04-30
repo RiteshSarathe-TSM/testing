@@ -1,4 +1,4 @@
-name: CI/CD to GKE .
+name: CI/CD to GKE
 
 on:
   push:
@@ -33,6 +33,11 @@ jobs:
 
     - name: Get GKE credentials
       run: gcloud container clusters get-credentials autopilot-cluster-2 --zone southamerica-east1
+
+    - name: Install gke-gcloud-auth-plugin
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
 
     - name: Apply Kubernetes manifests
       run: |

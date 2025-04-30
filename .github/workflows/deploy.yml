@@ -32,7 +32,7 @@ jobs:
         docker push southamerica-east1-docker.pkg.dev/astute-tractor-457019-j3/fast-api/service1:latest
 
     - name: Get GKE credentials
-      run: gcloud container clusters get-credentials autopilot-cluster-2 --zone southamerica-east1
+      run: gcloud container clusters get-credentials autopilot-cluster-3 --zone southamerica-west1
 
     - name: Install gke-gcloud-auth-plugin
       run: gcloud components install gke-gcloud-auth-plugin --quiet

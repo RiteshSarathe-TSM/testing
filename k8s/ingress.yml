@@ -4,8 +4,7 @@ metadata:
   name: service1-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"  # Enable SSL redirect
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"  # Force HTTP to HTTPS redirection
 spec:
   ingressClassName: nginx
   rules:
@@ -22,4 +21,4 @@ spec:
   tls:
   - hosts:
     - matorg.com
-    secretName: matorg-ssl-cert  # SSL certificate reference
+    secretName: matorg-ssl-cert  # Reference to GCP-managed certificate

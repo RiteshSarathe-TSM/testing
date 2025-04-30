@@ -4,6 +4,8 @@ metadata:
   name: service1-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"  # Enable SSL redirect
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
 spec:
   ingressClassName: nginx
   rules:
@@ -17,4 +19,7 @@ spec:
             name: service1
             port:
               number: 80
-
+  tls:
+  - hosts:
+    - matorg.com
+    secretName: matorg-ssl-cert  # SSL certificate reference

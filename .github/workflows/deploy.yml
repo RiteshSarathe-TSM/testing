@@ -39,10 +39,11 @@ jobs:
 
     - name: Apply Kubernetes manifests
       run: |
+        kubectl apply -f k8s/letsencrypt-prod.yaml
         kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/service.yaml
+        kubectl apply -f k8s/certificate.yaml
         kubectl apply -f k8s/ingress.yml
-        kubectl apply -f k8s/letsencrypt-prod.yaml
 
 
 

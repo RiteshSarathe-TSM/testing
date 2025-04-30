@@ -3,23 +3,21 @@ kind: Ingress
 metadata:
   name: service1-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2   # Handle path rewriting for /service1
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"   # Ensure HTTP to HTTPS redirection
-    kubernetes.io/ingress.class: "nginx"               # Ensure this ingress uses NGINX controller
-    networking.gke.io/managed-certificates: matorg-managed-cert  # Reference the GCP managed certificate
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - matorg.com
+    secretName: service1-tls
   rules:
-  - host: matorg.com                             # Ensure this matches your domain
+  - host: matorg.com
     http:
       paths:
-      - path: /service1(/|$)(.*)                   # Handle paths under /service1
+      - path: /service1(/|$)(.*)
         pathType: Prefix
         backend:
           service:
-            name: service1                       # Name of your service in Kubernetes
+            name: service1
             port:
-              number: 80                         # Service port (FastAPI runs on port 80)
-  tls:
-  - hosts:
-    - matorg.com                                 # The domain name for which the certificate is issued
-    secretName: matorg-ssl-cert                   # Reference to the SSL certificate (for GCP-managed certificate, this is optional)
+              number: 80

@@ -28,11 +28,11 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t southamerica-east1-docker.pkg.dev/astute-tractor-457019-j3/fast-api/service1:latest .
-        docker push southamerica-east1-docker.pkg.dev/astute-tractor-457019-j3/fast-api/service1:latest
+        docker build -t southamerica-east1-docker.pkg.dev/hallowed-object-458420-q9/fast-api/service1:latest .
+        docker push southamerica-east1-docker.pkg.dev/hallowed-object-458420-q9/fast-api/service1:latest
 
     - name: Get GKE credentials
-      run: gcloud container clusters get-credentials autopilot-cluster-3 --zone southamerica-west1
+      run: gcloud container clusters get-credentials autopilot-cluster-1 --zone us-central1
 
     - name: Install gke-gcloud-auth-plugin
       run: gcloud components install gke-gcloud-auth-plugin --quiet

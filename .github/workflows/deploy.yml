@@ -39,9 +39,6 @@ jobs:
 
     - name: Apply Kubernetes manifests
       run: |
-        
-        # kubectl apply -f k8s/cert-manager-clusterrole.yaml
-        # kubectl apply -f k8s/cert-manager-clusterrolebinding.yaml
         kubectl apply -f k8s/letsencrypt-prod.yaml
         kubectl apply -f k8s/certificate.yaml
         kubectl apply -f k8s/deployment.yaml

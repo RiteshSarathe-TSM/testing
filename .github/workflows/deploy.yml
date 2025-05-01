@@ -1,4 +1,4 @@
-name: CI/CD to GKE.
+name: CI/CD to GKE
 
 on:
   push:

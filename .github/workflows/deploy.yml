@@ -1,4 +1,4 @@
-name: CI/CD to GKE.
+name: CI/CD to GKE
 
 on:
   push:
@@ -57,11 +57,11 @@ jobs:
         /opt/sonar-scanner/bin/sonar-scanner \
           -Dsonar.projectKey=fe-odr-soft-release \
           -Dsonar.sources=src \
-          -Dsonar.host.url=http://35.208.148.105:9000 \
+          -Dsonar.host.url=http://34.31.16.126:9000 \
           -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
 
     # -------------------------
-    #BUILD AND DEPLOY
+    #  BUILD AND DEPLOY
     # -------------------------
 
     - name: Configure Docker

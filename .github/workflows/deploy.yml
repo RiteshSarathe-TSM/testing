@@ -13,6 +13,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Show directory structure (debug)
+      run: ls -R
+
     # Authenticate with GCP
     - name: Authenticate with GCP
       uses: google-github-actions/auth@v2
@@ -25,40 +28,43 @@ jobs:
         project_id: astute-tractor-457019-j3
 
     # -------------------------
-    #  SNYK & SONARQUBE FIRST
+    #  SNYK & SONARQUBE
     # -------------------------
 
-    # Install Snyk CLI
     - name: Install Snyk CLI
       run: npm install -g snyk
 
-    # Authenticate with Snyk
     - name: Authenticate with Snyk
       run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
-    # Run Snyk Security Scan
     - name: Run Snyk Security Scan
-      run: snyk test || true  # Avoid failure on minor vulnerabilities
+      run: snyk test || true  # Prevent failure on minor issues
 
-    # Install SonarQube Scanner
     - name: Install SonarQube Scanner
       run: |
         SONAR_VERSION="7.0.0.4796"
         curl -fSL -o sonar-scanner.zip "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_VERSION-linux-x64.zip"
         unzip sonar-scanner.zip
         sudo mv sonar-scanner-* /opt/sonar-scanner
-        echo 'export PATH="/opt/sonar-scanner/bin:$PATH"' | sudo tee -a /etc/profile
-        source /etc/profile
-        /opt/sonar-scanner/bin/sonar-scanner --version
+        echo "/opt/sonar-scanner/bin" >> $GITHUB_PATH
 
-    # Run SonarQube Analysis
     - name: Run SonarQube Analysis
       run: |
+        # Detect first-level directory with code if 'src' doesn't exist
+        if [ ! -d "src" ]; then
+          echo "⚠'src' directory not found. Trying to auto-detect source folder..."
+          SOURCE_FOLDER=$(find . -type d -maxdepth 1 -mindepth 1 ! -name ".*" | head -n 1 | cut -c 3-)
+        else
+          SOURCE_FOLDER="src"
+        fi
+
+        echo " Using '$SOURCE_FOLDER' as sonar.sources"
+
         /opt/sonar-scanner/bin/sonar-scanner \
           -Dsonar.projectKey=fe-odr-soft-release \
-          -Dsonar.sources=src \
+          -Dsonar.sources=$SOURCE_FOLDER \
           -Dsonar.host.url=http://34.31.16.126:9000 \
-          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+          -Dsonar.token=${{ secrets.SONARQUBE_TOKEN }}
 
     # -------------------------
     #  BUILD AND DEPLOY

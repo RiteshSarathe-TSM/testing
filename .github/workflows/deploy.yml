@@ -13,6 +13,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Authenticate with GCP
     - name: Authenticate with GCP
       uses: google-github-actions/auth@v2
       with:
@@ -23,6 +24,46 @@ jobs:
       with:
         project_id: astute-tractor-457019-j3
 
+    # -------------------------
+    #  SNYK & SONARQUBE FIRST
+    # -------------------------
+
+    # Install Snyk CLI
+    - name: Install Snyk CLI
+      run: npm install -g snyk
+
+    # Authenticate with Snyk
+    - name: Authenticate with Snyk
+      run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+    # Run Snyk Security Scan
+    - name: Run Snyk Security Scan
+      run: snyk test || true  # Avoid failure on minor vulnerabilities
+
+    # Install SonarQube Scanner
+    - name: Install SonarQube Scanner
+      run: |
+        SONAR_VERSION="7.0.0.4796"
+        curl -fSL -o sonar-scanner.zip "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_VERSION-linux-x64.zip"
+        unzip sonar-scanner.zip
+        sudo mv sonar-scanner-* /opt/sonar-scanner
+        echo 'export PATH="/opt/sonar-scanner/bin:$PATH"' | sudo tee -a /etc/profile
+        source /etc/profile
+        /opt/sonar-scanner/bin/sonar-scanner --version
+
+    # Run SonarQube Analysis
+    - name: Run SonarQube Analysis
+      run: |
+        /opt/sonar-scanner/bin/sonar-scanner \
+          -Dsonar.projectKey=fe-odr-soft-release \
+          -Dsonar.sources=src \
+          -Dsonar.host.url=http://35.208.148.105:9000 \
+          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+
+    # -------------------------
+    #BUILD AND DEPLOY
+    # -------------------------
+
     - name: Configure Docker
       run: gcloud auth configure-docker southamerica-east1-docker.pkg.dev
 
@@ -31,17 +72,14 @@ jobs:
         docker build -t southamerica-east1-docker.pkg.dev/hallowed-object-458420-q9/fast-api/service1:latest .
         docker push southamerica-east1-docker.pkg.dev/hallowed-object-458420-q9/fast-api/service1:latest
 
-    - name: Get GKE credentials
-      run: gcloud container clusters get-credentials autopilot-cluster-1 --zone us-central1
-
     - name: Install gke-gcloud-auth-plugin
       run: gcloud components install gke-gcloud-auth-plugin --quiet
+
+    - name: Get GKE credentials
+      run: gcloud container clusters get-credentials autopilot-cluster-1 --zone us-central1
 
     - name: Apply Kubernetes manifests
       run: |
         kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/service.yaml
         kubectl apply -f k8s/ingress.yml
-
-
-

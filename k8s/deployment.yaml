@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: service1
-        image: southamerica-east1-docker.pkg.dev/hallowed-object-458420-q9/fast-api/service1:latest
+        image: southamerica-east1-docker.pkg.dev/astute-tractor-457019-j3/fast-api/service1:latest
         ports:
         - containerPort: 80

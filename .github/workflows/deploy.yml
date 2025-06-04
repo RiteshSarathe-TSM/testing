@@ -74,7 +74,7 @@ jobs:
         /opt/sonar-scanner/bin/sonar-scanner \
           -Dsonar.projectKey=fe-odr-soft-release \
           -Dsonar.sources=$SOURCE_FOLDER \
-          -Dsonar.host.url=http://34.31.16.126:9000 \
+          -Dsonar.host.url=http://13.50.88.209:9000 \
           -Dsonar.token=${{ secrets.SONARQUBE_TOKEN }}
 
     # -------------------------
@@ -93,7 +93,7 @@ jobs:
       run: gcloud components install gke-gcloud-auth-plugin --quiet
 
     - name: Get GKE credentials
-      run: gcloud container clusters get-credentials autopilot-cluster-1 --zone us-central1
+      run: gcloud container clusters get-credentials autopilot-cluster-1 --zone southamerica-west1
 
     - name: Apply Kubernetes manifests
       run: |
